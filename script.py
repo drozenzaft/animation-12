@@ -19,12 +19,25 @@ from draw import *
   with the name being used.
   ==================== """
 def first_pass( commands ):
-    pass
-
+    bb = False
+    fb = False
+    for com in commands:
+        if 'basename' in com:
+            basename = com['args'][0]
+            bb = True
+        elif 'frames' in com:
+            if !bb:
+                basename = 'my_animation'
+            num_frames = com['args'][0]
+            fb = True
+        elif 'vary' in com:
+            if !fb:
+                raise Exception('Please insert a valid frame rate value')
+        
 """======== second_pass( commands ) ==========
 
   In order to set the knobs for animation, we need to keep
-  a seaprate value for each knob for each frame. We can do
+  a separate value for each knob for each frame. We can do
   this by using an array of dictionaries. Each array index
   will correspond to a frame (eg. knobs[0] would be the first
   frame, knobs[2] would be the 3rd frame and so on).
@@ -36,10 +49,10 @@ def first_pass( commands ):
   Go through the command array, and when you find vary, go
   from knobs[0] to knobs[frames-1] and add (or modify) the
   dictionary corresponding to the given knob with the
-  appropirate value.
+  appropriate value.
   ===================="""
 def second_pass( commands, num_frames ):
-    pass
+    
 
 
 def run(filename):
@@ -161,3 +174,4 @@ def run(filename):
             display(screen)
         elif c == 'save':
             save_extension(screen, args[0])
+    make_animation(basename)
