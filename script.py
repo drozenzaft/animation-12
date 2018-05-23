@@ -52,7 +52,17 @@ def first_pass( commands ):
   appropriate value.
   ===================="""
 def second_pass( commands, num_frames ):
-    
+    knobs = []
+    for n in range(num_frames-1):
+        knobs[n] = 0
+    for com in commands:
+        if 'vary' in com:
+            frames = len(range(com[3])[com[2]:])
+            for i in frames:
+                step = (com[5]-com[4])/frames
+                knob_i = {}
+                knob_i[com[1]] = com[4] + step*i
+                knob[i] = (knob_i)
 
 
 def run(filename):
