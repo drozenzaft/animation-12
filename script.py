@@ -30,6 +30,7 @@ def first_pass( commands ):
         x = com['op']
         if x == 'basename':
             basename = com['args'][0]
+            print com['args'][0]
             bb = True
         elif x == 'frames':
             if not bb:
@@ -41,7 +42,7 @@ def first_pass( commands ):
             if not fb:
                 raise Exception('Please insert a valid frame rate value')
     return animated
-        
+print '\n\n\nframes: ' + str(num_frames)
 """======== second_pass( commands ) ==========
 
   In order to set the knobs for animation, we need to keep
@@ -71,10 +72,13 @@ def second_pass( commands, num_frames ):
                 knobs[com[2]+i] = knob_i
     symbols = knobs
 
-def animate(commands):
-    if not first_pass(commands):
-        return
+def animate(commands,screen,matrix,frame):
+    print matrix
     second_pass(commands, num_frames)
+    if not os.path.exists('anim'):
+        os.mkdir('anim')
+    print 'anim/'  + basename + "%03d"%frame + '.png'
+    save_extension(screen, 'anim/' + basename+'%03d'%frame+'.png')
     make_animation(basename)
 def run(filename):
     view = [0,
@@ -111,6 +115,7 @@ def run(filename):
     consts = ''
     coords = []
     coords1 = []
+    frame = 0
 
     p = mdl.parseFile(filename)
 
@@ -194,4 +199,7 @@ def run(filename):
             display(screen)
         elif c == 'save':
             save_extension(screen, args[0])
-    animate(commands)
+        elif first_pass(commands):
+            animate(commands,screen,tmp,frame)
+            frame += 1
+            clear_screen(screen)
