@@ -1,4 +1,5 @@
 import mdl
+import os
 from display import *
 from matrix import *
 from draw import *
@@ -18,21 +19,28 @@ from draw import *
   to some default value, and print out a message
   with the name being used.
   ==================== """
+basename = ''
+num_frames = 0
 def first_pass( commands ):
     bb = False
     fb = False
+    animated = False
     for com in commands:
-        if 'basename' in com:
+        print 'com: ' + str(com)
+        x = com['op']
+        if x == 'basename':
             basename = com['args'][0]
             bb = True
-        elif 'frames' in com:
-            if !bb:
+        elif x == 'frames':
+            if not bb:
                 basename = 'my_animation'
             num_frames = com['args'][0]
             fb = True
-        elif 'vary' in com:
-            if !fb:
+        elif x == 'vary':
+            animated = True
+            if not fb:
                 raise Exception('Please insert a valid frame rate value')
+    return animated
         
 """======== second_pass( commands ) ==========
 
@@ -52,23 +60,23 @@ def first_pass( commands ):
   appropriate value.
   ===================="""
 def second_pass( commands, num_frames ):
-    knobs = []
-    for n in range(num_frames-1):
-        knobs[n] = 0
+    knobs = [0]*(num_frames-1)
     for com in commands:
         if 'vary' in com:
-            frames = len(range(com[3])[com[2]:])
+            frames = com[3]-com[2]+1
             for i in frames:
                 step = (com[5]-com[4])/frames
                 knob_i = {}
                 knob_i[com[1]] = com[4] + step*i
-                knob[i] = (knob_i)
+                knobs[com[2]+i] = knob_i
+    symbols = knobs
 
-
+def animate(commands):
+    if not first_pass(commands):
+        return
+    second_pass(commands, num_frames)
+    make_animation(basename)
 def run(filename):
-    """
-    This function runs an mdl script
-    """
     view = [0,
             0,
             1];
@@ -181,7 +189,9 @@ def run(filename):
         elif c == 'pop':
             stack.pop()
         elif c == 'display':
+            if first_pass():
+                second_pass()
             display(screen)
         elif c == 'save':
             save_extension(screen, args[0])
-    make_animation(basename)
+    animate(commands)
